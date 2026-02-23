@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import inlineformset_factory
 
-from .models import CaseAsset, CaseChannelSpend, CaseMetric, CaseStudy
+from .models import CaseAsset, CaseChannelSpend, CaseMetric, CaseStudy, Industry, Organization
 
 
 class CaseStudyForm(forms.ModelForm):
@@ -27,14 +27,13 @@ class CaseStudyForm(forms.ModelForm):
         fields = [
             "title",
             "slug",
-            "client_or_org",
+            "organization",
+            "sector",
             "brand_or_campaign",
             "date_start",
             "date_end",
             "sort_date",
             "location",
-            "status",
-            "confidentiality",
             "tags",
             "one_liner",
             "objective",
@@ -62,6 +61,20 @@ class CaseStudyForm(forms.ModelForm):
             "date_end": forms.TextInput(attrs={"placeholder": "2024 or March 2024"}),
             "sort_date": forms.TextInput(attrs={"placeholder": "Optional sort label, e.g. 2024"}),
         }
+
+
+class OrganizationForm(forms.ModelForm):
+    class Meta:
+        model = Organization
+        fields = ["name"]
+        widgets = {"name": forms.TextInput(attrs={"class": "input", "placeholder": "Organization name"})}
+
+
+class IndustryForm(forms.ModelForm):
+    class Meta:
+        model = Industry
+        fields = ["name"]
+        widgets = {"name": forms.TextInput(attrs={"class": "input", "placeholder": "Industry name"})}
 
 
 CaseAssetFormSet = inlineformset_factory(

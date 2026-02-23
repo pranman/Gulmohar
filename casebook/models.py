@@ -21,25 +21,27 @@ class CaseStudyTag(TaggedItemBase):
     )
 
 
+class Organization(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+
+    class Meta:
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
+
+class Industry(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+
+    class Meta:
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
+
 class CaseStudy(index.Indexed, ClusterableModel):
-    STATUS_DRAFT = "draft"
-    STATUS_PUBLISHABLE = "publishable"
-    STATUS_SENSITIVE = "sensitive"
-    STATUS_CHOICES = [
-        (STATUS_DRAFT, "Draft"),
-        (STATUS_PUBLISHABLE, "Publishable"),
-        (STATUS_SENSITIVE, "Sensitive"),
-    ]
-
-    CONFIDENTIALITY_PUBLIC = "public"
-    CONFIDENTIALITY_ANONYMISED = "anonymised"
-    CONFIDENTIALITY_PRIVATE = "private"
-    CONFIDENTIALITY_CHOICES = [
-        (CONFIDENTIALITY_PUBLIC, "Public"),
-        (CONFIDENTIALITY_ANONYMISED, "Anonymised"),
-        (CONFIDENTIALITY_PRIVATE, "Private"),
-    ]
-
     CURRENCY_GBP = "GBP"
     CURRENCY_USD = "USD"
     CURRENCY_EUR = "EUR"
@@ -61,10 +63,21 @@ class CaseStudy(index.Indexed, ClusterableModel):
         blank=True,
         help_text="Optional; auto-generated from title if left blank.",
     )
-    client_or_org = models.CharField(
-        max_length=255,
+    organization = models.ForeignKey(
+        "casebook.Organization",
+        null=True,
         blank=True,
-        help_text="Client, organization, or stakeholder this work was for.",
+        on_delete=models.SET_NULL,
+        related_name="case_studies",
+        help_text="Client / organization this campaign belongs to.",
+    )
+    sector = models.ForeignKey(
+        "casebook.Industry",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="case_studies",
+        help_text="Industry sector for this campaign.",
     )
     brand_or_campaign = models.CharField(
         max_length=255,
@@ -87,20 +100,6 @@ class CaseStudy(index.Indexed, ClusterableModel):
         max_length=255,
         blank=True,
         help_text='Geographic scope (e.g. "UK / US / Global").',
-    )
-    status = models.CharField(
-        max_length=20,
-        choices=STATUS_CHOICES,
-        default=STATUS_DRAFT,
-        blank=True,
-        help_text="Workflow status for inclusion readiness.",
-    )
-    confidentiality = models.CharField(
-        max_length=20,
-        choices=CONFIDENTIALITY_CHOICES,
-        default=CONFIDENTIALITY_PUBLIC,
-        blank=True,
-        help_text="Content sensitivity and privacy level.",
     )
     one_liner = models.TextField(blank=True, help_text="One or two sentence summary of the case.")
     objective = models.TextField(blank=True, help_text="What success meant for this case.")
@@ -185,7 +184,18 @@ class CaseStudy(index.Indexed, ClusterableModel):
 
     search_fields = [
         index.SearchField("title", partial_match=True),
-        index.SearchField("client_or_org", partial_match=True),
+        index.RelatedFields(
+            "organization",
+            [
+                index.SearchField("name", partial_match=True),
+            ],
+        ),
+        index.RelatedFields(
+            "sector",
+            [
+                index.SearchField("name", partial_match=True),
+            ],
+        ),
         index.SearchField("brand_or_campaign", partial_match=True),
         index.SearchField("one_liner", partial_match=True),
     ]
@@ -193,14 +203,13 @@ class CaseStudy(index.Indexed, ClusterableModel):
     overview_panels = [
         FieldPanel("title"),
         FieldPanel("slug"),
-        FieldPanel("client_or_org"),
+        FieldPanel("organization"),
+        FieldPanel("sector"),
         FieldPanel("brand_or_campaign"),
         FieldPanel("date_start"),
         FieldPanel("date_end"),
         FieldPanel("sort_date"),
         FieldPanel("location"),
-        FieldPanel("status"),
-        FieldPanel("confidentiality"),
         FieldPanel("tags"),
         FieldPanel("one_liner"),
     ]
@@ -248,7 +257,7 @@ class CaseStudy(index.Indexed, ClusterableModel):
         ordering = ["-sort_date", "-date_end", "-date_start", "title"]
 
     def __str__(self):
-        return self.title
+        return self.title or f"Campaign {self.slug}"
 
     def clean(self):
         super().clean()
@@ -263,7 +272,8 @@ class CaseStudy(index.Indexed, ClusterableModel):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            source = self.title or self.brand_or_campaign or self.client_or_org or f"campaign-{uuid4().hex[:8]}"
+            organization_name = self.organization.name if self.organization else ""
+            source = self.title or self.brand_or_campaign or organization_name or f"campaign-{uuid4().hex[:8]}"
             base_slug = slugify(source) or f"campaign-{uuid4().hex[:8]}"
             slug_candidate = base_slug
             counter = 2

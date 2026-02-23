@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Industries{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container is-max-desktop">
+        <div class="level">
+            <div class="level-left">
+                <h1 class="title is-3">Industries</h1>
+            </div>
+            <div class="level-right">
+                <a class="button is-light" href="{% url 'casebook_index' %}">Back to Casebook</a>
+            </div>
+        </div>
+
+        <div class="box">
+            <form method="post">
+                {% csrf_token %}
+                <div class="field has-addons">
+                    <div class="control is-expanded">
+                        {{ form.name }}
+                    </div>
+                    <div class="control">
+                        <button class="button is-primary" type="submit">Add Industry</button>
+                    </div>
+                </div>
+                {% for error in form.name.errors %}
+                <p class="help is-danger">{{ error }}</p>
+                {% endfor %}
+            </form>
+        </div>
+
+        <div class="box">
+            <h2 class="title is-5">Current industries</h2>
+            <div class="tags">
+                {% for industry in industries %}
+                <span class="tag is-info is-light">{{ industry.name }}</span>
+                {% empty %}
+                <span>No industries added yet.</span>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

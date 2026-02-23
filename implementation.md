@@ -11,7 +11,7 @@
 
 ## Current step
 
-Refresh implementation complete and pushed.
+Implementing requested v2 workflow changes: organization/industry dropdowns, sector field, campaign delete actions, and addable table UX for related rows.
 
 ## Validation results (refresh run)
 
@@ -25,6 +25,10 @@ Refresh implementation complete and pushed.
   - flexible text dates accepted.
   - image + video asset fields present.
   - lightweight campaign submit/edit flow passes.
+- v2 delta validation:
+  - `manage.py makemigrations casebook`: generated `0003_industry_organization_remove_casestudy_client_or_org_and_more.py`.
+  - `manage.py migrate`: passed.
+  - `manage.py check`: passed.
 
 ## Git checkpoints (refresh run)
 
@@ -40,3 +44,5 @@ Refresh implementation complete and pushed.
   - Commit: `c0a0eb9`
   - Scope: validation outputs + docs completion for public UX refresh
   - Push: `main` updated on origin
+- Checkpoint V2-R1 pending:
+  - Scope: organization/industry models, sector field, campaign delete route, and related UI/filter updates

@@ -9,7 +9,7 @@ from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
 from wagtail.models import Collection
 
-from casebook.models import CaseAsset, CaseChannelSpend, CaseMetric, CaseStudy
+from casebook.models import CaseAsset, CaseChannelSpend, CaseMetric, CaseStudy, Industry, Organization
 
 
 def _build_test_assets(test_dir):
@@ -51,17 +51,18 @@ class Command(BaseCommand):
         output = Path(options["output"])
         assets_dir = Path(options["assets_dir"])
         image_paths = _build_test_assets(assets_dir)
+        organization, _ = Organization.objects.get_or_create(name="Lorem Org")
+        industry, _ = Industry.objects.get_or_create(name="Consumer Tech")
 
         case = CaseStudy.objects.create(
             title=f"Lorem Ipsum Campaign {uuid4().hex[:8]}",
-            client_or_org="Lorem Org",
+            organization=organization,
+            sector=industry,
             brand_or_campaign="Ipsum Launch",
             date_start="January 2025",
             date_end="March 2025",
             sort_date="2025",
             location="UK / US / Global",
-            status=CaseStudy.STATUS_PUBLISHABLE,
-            confidentiality=CaseStudy.CONFIDENTIALITY_PUBLIC,
             one_liner="Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
             objective="Grow qualified reach and improve conversion quality.",
             audience="Primary audience: growth-stage founders and operators.",

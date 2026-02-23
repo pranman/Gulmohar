@@ -15,6 +15,8 @@
             <div class="level-right">
                 <div class="buttons">
                     <a class="button is-primary" href="{% url 'casebook_create' %}">New Campaign</a>
+                    <a class="button is-link is-light" href="{% url 'casebook_organizations' %}">Organizations</a>
+                    <a class="button is-link is-light" href="{% url 'casebook_industries' %}">Industries</a>
                     <a class="button is-light" href="/admin/snippets/casebook/casestudy/">Snippet Admin</a>
                 </div>
             </div>
@@ -27,24 +29,24 @@
                         <label class="label">Search</label>
                         <input class="input" type="text" name="q" value="{{ query }}" placeholder="title, client, brand, one-liner">
                     </div>
-                    <div class="column is-2">
-                        <label class="label">Status</label>
+                    <div class="column is-3">
+                        <label class="label">Organization</label>
                         <div class="select is-fullwidth">
-                            <select name="status">
-                                <option value="">Any status</option>
-                                {% for key, label in status_choices %}
-                                <option value="{{ key }}" {% if status == key %}selected{% endif %}>{{ label }}</option>
+                            <select name="organization">
+                                <option value="">Any organization</option>
+                                {% for org in organizations %}
+                                <option value="{{ org.id }}" {% if organization == org.id|stringformat:"s" %}selected{% endif %}>{{ org.name }}</option>
                                 {% endfor %}
                             </select>
                         </div>
                     </div>
                     <div class="column is-3">
-                        <label class="label">Confidentiality</label>
+                        <label class="label">Sector</label>
                         <div class="select is-fullwidth">
-                            <select name="confidentiality">
-                                <option value="">Any confidentiality</option>
-                                {% for key, label in confidentiality_choices %}
-                                <option value="{{ key }}" {% if confidentiality == key %}selected{% endif %}>{{ label }}</option>
+                            <select name="sector">
+                                <option value="">Any sector</option>
+                                {% for item in sectors %}
+                                <option value="{{ item.id }}" {% if sector == item.id|stringformat:"s" %}selected{% endif %}>{{ item.name }}</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -67,11 +69,11 @@
                 <thead>
                     <tr>
                         <th>Campaign</th>
-                        <th>Client / Org</th>
-                        <th>Status</th>
-                        <th>Confidentiality</th>
+                        <th>Organization</th>
+                        <th>Sector</th>
                         <th>Sort Date</th>
                         <th>Tags</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -81,14 +83,19 @@
                             <a href="{% url 'casebook_detail' slug=case.slug %}">{{ case.title|default:"Untitled Campaign" }}</a><br>
                             <a class="is-size-7" href="{% url 'casebook_edit' slug=case.slug %}">Edit</a>
                         </td>
-                        <td>{{ case.client_or_org|default:"-" }}</td>
-                        <td>{{ case.get_status_display|default:"-" }}</td>
-                        <td>{{ case.get_confidentiality_display|default:"-" }}</td>
+                        <td>{{ case.organization|default:"-" }}</td>
+                        <td>{{ case.sector|default:"-" }}</td>
                         <td>{{ case.sort_date|default:"-" }}</td>
                         <td>
                             {% for tag in case.tags.all %}
                             <span class="tag is-light">{{ tag.name }}</span>
                             {% empty %}-{% endfor %}
+                        </td>
+                        <td>
+                            <form method="post" action="{% url 'casebook_delete' slug=case.slug %}" onsubmit="return confirm('Delete this campaign and all related records?');">
+                                {% csrf_token %}
+                                <button class="button is-small is-danger is-light" type="submit" title="Delete campaign">🗑</button>
+                            </form>
                         </td>
                     </tr>
                     {% endfor %}

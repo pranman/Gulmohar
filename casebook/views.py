@@ -4,31 +4,34 @@ from django.shortcuts import get_object_or_404, redirect, render
 from .forms import (
     CaseAssetFormSet,
     CaseChannelSpendFormSet,
+    IndustryForm,
     CaseMetricFormSet,
+    OrganizationForm,
     CaseStudyForm,
 )
-from .models import CaseStudy
+from .models import CaseStudy, Industry, Organization
 
 
 def casebook_index(request):
     query = request.GET.get("q", "").strip()
-    confidentiality = request.GET.get("confidentiality", "").strip()
-    status = request.GET.get("status", "").strip()
+    organization = request.GET.get("organization", "").strip()
+    sector = request.GET.get("sector", "").strip()
     tag = request.GET.get("tag", "").strip()
 
-    cases = CaseStudy.objects.all().prefetch_related("tags")
+    cases = CaseStudy.objects.select_related("organization", "sector").all().prefetch_related("tags")
 
     if query:
         cases = cases.filter(
             Q(title__icontains=query)
-            | Q(client_or_org__icontains=query)
+            | Q(organization__name__icontains=query)
+            | Q(sector__name__icontains=query)
             | Q(brand_or_campaign__icontains=query)
             | Q(one_liner__icontains=query)
         )
-    if confidentiality:
-        cases = cases.filter(confidentiality=confidentiality)
-    if status:
-        cases = cases.filter(status=status)
+    if organization:
+        cases = cases.filter(organization_id=organization)
+    if sector:
+        cases = cases.filter(sector_id=sector)
     if tag:
         cases = cases.filter(tags__name__iexact=tag)
 
@@ -39,11 +42,11 @@ def casebook_index(request):
         {
             "cases": cases,
             "query": query,
-            "status": status,
-            "confidentiality": confidentiality,
+            "organization": organization,
+            "sector": sector,
             "tag": tag,
-            "status_choices": CaseStudy.STATUS_CHOICES,
-            "confidentiality_choices": CaseStudy.CONFIDENTIALITY_CHOICES,
+            "organizations": Organization.objects.all(),
+            "sectors": Industry.objects.all(),
         },
     )
 
@@ -131,4 +134,38 @@ def casebook_edit(request, slug):
             "metric_formset": metric_formset,
             "channel_spend_formset": channel_spend_formset,
         },
+    )
+
+
+def casebook_delete(request, slug):
+    case = get_object_or_404(CaseStudy, slug=slug)
+    if request.method == "POST":
+        case.delete()
+        return redirect("casebook_index")
+    return redirect("casebook_detail", slug=slug)
+
+
+def organization_list(request):
+    form = OrganizationForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        return redirect("casebook_organizations")
+    organizations = Organization.objects.all()
+    return render(
+        request,
+        "casebook/organizations.html",
+        {"form": form, "organizations": organizations},
+    )
+
+
+def industry_list(request):
+    form = IndustryForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        return redirect("casebook_industries")
+    industries = Industry.objects.all()
+    return render(
+        request,
+        "casebook/industries.html",
+        {"form": form, "industries": industries},
     )

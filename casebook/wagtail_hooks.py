@@ -16,7 +16,7 @@ class CaseStudyFilterSet(WagtailFilterSet):
 
     class Meta:
         model = CaseStudy
-        fields = ["status", "confidentiality", "tag"]
+        fields = ["organization", "sector", "tag"]
 
 
 class CaseStudyViewSet(SnippetViewSet):
@@ -24,8 +24,8 @@ class CaseStudyViewSet(SnippetViewSet):
     icon = "folder-open-inverse"
     menu_label = "Case Studies"
     menu_name = "case_studies"
-    list_display = ["title", "client_or_org", "status", "confidentiality", "sort_date"]
-    search_fields = ["title", "client_or_org", "brand_or_campaign", "one_liner"]
+    list_display = ["title", "organization", "sector", "sort_date"]
+    search_fields = ["title", "organization__name", "sector__name", "brand_or_campaign", "one_liner"]
     filterset_class = CaseStudyFilterSet
 
 

@@ -23,11 +23,10 @@
 
         <div class="box">
             <div class="columns is-multiline">
-                <div class="column is-4"><strong>Client/Org:</strong> {{ case.client_or_org|default:"-" }}</div>
+                <div class="column is-4"><strong>Organization:</strong> {{ case.organization|default:"-" }}</div>
+                <div class="column is-4"><strong>Sector:</strong> {{ case.sector|default:"-" }}</div>
                 <div class="column is-4"><strong>Brand/Campaign:</strong> {{ case.brand_or_campaign|default:"-" }}</div>
                 <div class="column is-4"><strong>Dates:</strong> {{ case.date_start|default:"-" }} to {{ case.date_end|default:"-" }}</div>
-                <div class="column is-4"><strong>Status:</strong> {{ case.get_status_display|default:"-" }}</div>
-                <div class="column is-4"><strong>Confidentiality:</strong> {{ case.get_confidentiality_display|default:"-" }}</div>
                 <div class="column is-4"><strong>Sort Date:</strong> {{ case.sort_date|default:"-" }}</div>
             </div>
         </div>
