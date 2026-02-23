@@ -7,11 +7,11 @@
 - Public UX Refresh Phase C (Bulma template redesign): complete
 - Public UX Refresh Phase D (export contract update): complete
 - Public UX Refresh Phase E (validation + automation): complete
-- Public UX Refresh Phase F (docs + checkpoints): in progress
+- Public UX Refresh Phase F (docs + checkpoints): complete
 
 ## Current step
 
-Finalizing documentation and last checkpoint push after successful validation.
+Refresh implementation complete and pushed.
 
 ## Validation results (refresh run)
 
@@ -36,5 +36,7 @@ Finalizing documentation and last checkpoint push after successful validation.
   - Commit: `cd2d28a`
   - Scope: admin/frontend flow improvements + Bulma redesign
   - Push: `main` updated on origin
-- Checkpoint R3 pending:
+- Checkpoint R3 complete:
+  - Commit: `c0a0eb9`
   - Scope: validation outputs + docs completion for public UX refresh
+  - Push: `main` updated on origin
