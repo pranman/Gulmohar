@@ -11,7 +11,7 @@
 
 ## Current step
 
-Implementing requested v2 workflow changes: organization/industry dropdowns, sector field, campaign delete actions, and addable table UX for related rows.
+Implementing tabular add/remove row UX for assets, metrics, and channel spend with explicit add/trash controls.
 
 ## Validation results (refresh run)
 
@@ -29,6 +29,8 @@ Implementing requested v2 workflow changes: organization/industry dropdowns, sec
   - `manage.py makemigrations casebook`: generated `0003_industry_organization_remove_casestudy_client_or_org_and_more.py`.
   - `manage.py migrate`: passed.
   - `manage.py check`: passed.
+  - `manage.py run_casebook_final_test --output exports/final_casebook_export.json`: passed.
+  - Browser verification: Organizations/Industries menu links, per-campaign delete button, tabular add/delete row UX for assets/metrics/channel spend.
 
 ## Git checkpoints (refresh run)
 
@@ -44,5 +46,9 @@ Implementing requested v2 workflow changes: organization/industry dropdowns, sec
   - Commit: `c0a0eb9`
   - Scope: validation outputs + docs completion for public UX refresh
   - Push: `main` updated on origin
-- Checkpoint V2-R1 pending:
+- Checkpoint V2-R1 complete:
+  - Commit: `7a84474`
   - Scope: organization/industry models, sector field, campaign delete route, and related UI/filter updates
+  - Push: `main` updated on origin
+- Checkpoint V2-R2 pending:
+  - Scope: tabular add/remove UX for assets/metrics/channel spend with add/trash controls

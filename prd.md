@@ -25,6 +25,7 @@ Build a Wagtail app named `casebook` to capture detailed case studies with narra
 - Admin supports search/filter/list columns and inline editing.
 - Frontend allows localhost interaction with records, including create/edit for case studies and related entities.
 - Frontend case list supports per-row campaign deletion (including related records).
+- Assets, metrics, and channel spend use tabular add/remove rows with explicit add and delete controls.
 - `export_casebook` command emits valid JSON matching required schema.
 - Export command supports optional note inclusion and media-aware asset payloads.
 - Final automated test run creates test data, attaches images, and produces successful export without manual intervention.

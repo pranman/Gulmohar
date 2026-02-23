@@ -54,76 +54,129 @@
                 <h2 class="title is-5">Assets (images or video files)</h2>
                 <p class="mb-4">You can attach multiple items. Use either image or video per asset row.</p>
                 {{ asset_formset.management_form }}
-                {% for form in asset_formset %}
-                <div class="card mb-4">
-                    <div class="card-content">
-                        <h3 class="title is-6">Asset {{ forloop.counter }}</h3>
-                        {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
-                        <div class="columns is-multiline">
-                            {% for field in form.visible_fields %}
-                            <div class="column is-6">
-                                <div class="field">
-                                    <label class="label">{{ field.label }}</label>
-                                    <div class="control">{{ field }}</div>
-                                    {% if field.help_text %}<p class="help">{{ field.help_text }}</p>{% endif %}
-                                    {% for error in field.errors %}<p class="help is-danger">{{ error }}</p>{% endfor %}
-                                </div>
-                            </div>
+                <div class="table-container">
+                    <table class="table is-fullwidth is-striped" id="assets-table">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Image</th>
+                                <th>Video</th>
+                                <th>Caption</th>
+                                <th>Platform</th>
+                                <th>Format</th>
+                                <th>Date</th>
+                                <th>Hero</th>
+                                <th>Alt text</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="assets-rows">
+                            {% for form in asset_formset %}
+                            <tr class="form-row">
+                                {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+                                <td>{{ form.asset_type }}</td>
+                                <td>{{ form.image }}</td>
+                                <td>{{ form.video }}</td>
+                                <td>{{ form.caption }}</td>
+                                <td>{{ form.platform }}</td>
+                                <td>{{ form.format }}</td>
+                                <td>{{ form.date }}</td>
+                                <td>{{ form.is_hero }}</td>
+                                <td>{{ form.alt_text }}</td>
+                                <td>
+                                    <button class="button is-small is-danger is-light delete-row" type="button">&#128465;</button>
+                                    <span class="is-hidden">{{ form.DELETE }}</span>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr class="is-empty-row">
+                                <td colspan="10" class="has-text-grey">No asset rows yet.</td>
+                            </tr>
                             {% endfor %}
-                        </div>
-                    </div>
+                        </tbody>
+                    </table>
                 </div>
-                {% endfor %}
+                <button class="button is-link is-light add-row" type="button" data-target="assets">Add Asset</button>
             </section>
 
             <section id="metrics" class="box">
                 <h2 class="title is-5">Metrics</h2>
                 {{ metric_formset.management_form }}
-                {% for form in metric_formset %}
-                <div class="card mb-4">
-                    <div class="card-content">
-                        <h3 class="title is-6">Metric {{ forloop.counter }}</h3>
-                        {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
-                        <div class="columns is-multiline">
-                            {% for field in form.visible_fields %}
-                            <div class="column is-6">
-                                <div class="field">
-                                    <label class="label">{{ field.label }}</label>
-                                    <div class="control">{{ field }}</div>
-                                    {% if field.help_text %}<p class="help">{{ field.help_text }}</p>{% endif %}
-                                    {% for error in field.errors %}<p class="help is-danger">{{ error }}</p>{% endfor %}
-                                </div>
-                            </div>
+                <div class="table-container">
+                    <table class="table is-fullwidth is-striped" id="metrics-table">
+                        <thead>
+                            <tr>
+                                <th>Metric</th>
+                                <th>Value</th>
+                                <th>Timeframe</th>
+                                <th>Source</th>
+                                <th>Notes</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="metrics-rows">
+                            {% for form in metric_formset %}
+                            <tr class="form-row">
+                                {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+                                <td>{{ form.metric_name }}</td>
+                                <td>{{ form.value }}</td>
+                                <td>{{ form.timeframe }}</td>
+                                <td>{{ form.source }}</td>
+                                <td>{{ form.notes }}</td>
+                                <td>
+                                    <button class="button is-small is-danger is-light delete-row" type="button">&#128465;</button>
+                                    <span class="is-hidden">{{ form.DELETE }}</span>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr class="is-empty-row">
+                                <td colspan="6" class="has-text-grey">No metric rows yet.</td>
+                            </tr>
                             {% endfor %}
-                        </div>
-                    </div>
+                        </tbody>
+                    </table>
                 </div>
-                {% endfor %}
+                <button class="button is-link is-light add-row" type="button" data-target="metrics">Add Metric</button>
             </section>
 
             <section id="channel-spend" class="box">
                 <h2 class="title is-5">Channel Spend</h2>
                 {{ channel_spend_formset.management_form }}
-                {% for form in channel_spend_formset %}
-                <div class="card mb-4">
-                    <div class="card-content">
-                        <h3 class="title is-6">Channel Spend {{ forloop.counter }}</h3>
-                        {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
-                        <div class="columns is-multiline">
-                            {% for field in form.visible_fields %}
-                            <div class="column is-6">
-                                <div class="field">
-                                    <label class="label">{{ field.label }}</label>
-                                    <div class="control">{{ field }}</div>
-                                    {% if field.help_text %}<p class="help">{{ field.help_text }}</p>{% endif %}
-                                    {% for error in field.errors %}<p class="help is-danger">{{ error }}</p>{% endfor %}
-                                </div>
-                            </div>
+                <div class="table-container">
+                    <table class="table is-fullwidth is-striped" id="channel-spend-table">
+                        <thead>
+                            <tr>
+                                <th>Channel</th>
+                                <th>Currency</th>
+                                <th>Spend</th>
+                                <th>Dates</th>
+                                <th>Notes</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="channel-spend-rows">
+                            {% for form in channel_spend_formset %}
+                            <tr class="form-row">
+                                {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+                                <td>{{ form.channel }}</td>
+                                <td>{{ form.spend_currency }}</td>
+                                <td>{{ form.spend_amount }}</td>
+                                <td>{{ form.dates }}</td>
+                                <td>{{ form.notes }}</td>
+                                <td>
+                                    <button class="button is-small is-danger is-light delete-row" type="button">&#128465;</button>
+                                    <span class="is-hidden">{{ form.DELETE }}</span>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr class="is-empty-row">
+                                <td colspan="6" class="has-text-grey">No spend rows yet.</td>
+                            </tr>
                             {% endfor %}
-                        </div>
-                    </div>
+                        </tbody>
+                    </table>
                 </div>
-                {% endfor %}
+                <button class="button is-link is-light add-row" type="button" data-target="channel-spend">Add Channel Spend</button>
             </section>
 
             <div class="box">
@@ -135,4 +188,123 @@
         </form>
     </div>
 </section>
+
+<template id="assets-empty-template">
+    <tr class="form-row">
+        {% with form=asset_formset.empty_form %}
+        {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+        <td>{{ form.asset_type }}</td>
+        <td>{{ form.image }}</td>
+        <td>{{ form.video }}</td>
+        <td>{{ form.caption }}</td>
+        <td>{{ form.platform }}</td>
+        <td>{{ form.format }}</td>
+        <td>{{ form.date }}</td>
+        <td>{{ form.is_hero }}</td>
+        <td>{{ form.alt_text }}</td>
+        <td>
+            <button class="button is-small is-danger is-light delete-row" type="button">&#128465;</button>
+            <span class="is-hidden">{{ form.DELETE }}</span>
+        </td>
+        {% endwith %}
+    </tr>
+</template>
+
+<template id="metrics-empty-template">
+    <tr class="form-row">
+        {% with form=metric_formset.empty_form %}
+        {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+        <td>{{ form.metric_name }}</td>
+        <td>{{ form.value }}</td>
+        <td>{{ form.timeframe }}</td>
+        <td>{{ form.source }}</td>
+        <td>{{ form.notes }}</td>
+        <td>
+            <button class="button is-small is-danger is-light delete-row" type="button">&#128465;</button>
+            <span class="is-hidden">{{ form.DELETE }}</span>
+        </td>
+        {% endwith %}
+    </tr>
+</template>
+
+<template id="channel-spend-empty-template">
+    <tr class="form-row">
+        {% with form=channel_spend_formset.empty_form %}
+        {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+        <td>{{ form.channel }}</td>
+        <td>{{ form.spend_currency }}</td>
+        <td>{{ form.spend_amount }}</td>
+        <td>{{ form.dates }}</td>
+        <td>{{ form.notes }}</td>
+        <td>
+            <button class="button is-small is-danger is-light delete-row" type="button">&#128465;</button>
+            <span class="is-hidden">{{ form.DELETE }}</span>
+        </td>
+        {% endwith %}
+    </tr>
+</template>
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script>
+  const formsetMap = {
+    assets: {
+      totalId: "id_assets-TOTAL_FORMS",
+      rowsId: "assets-rows",
+      templateId: "assets-empty-template"
+    },
+    metrics: {
+      totalId: "id_metrics-TOTAL_FORMS",
+      rowsId: "metrics-rows",
+      templateId: "metrics-empty-template"
+    },
+    "channel-spend": {
+      totalId: "id_channel_spend-TOTAL_FORMS",
+      rowsId: "channel-spend-rows",
+      templateId: "channel-spend-empty-template"
+    }
+  };
+
+  function removeEmptyPlaceholder(rowsContainer) {
+    const emptyRow = rowsContainer.querySelector(".is-empty-row");
+    if (emptyRow) emptyRow.remove();
+  }
+
+  function addDeleteBehavior(row) {
+    const deleteButton = row.querySelector(".delete-row");
+    if (!deleteButton) return;
+    deleteButton.addEventListener("click", () => {
+      const deleteInput = row.querySelector("input[type='checkbox'][name$='-DELETE']");
+      if (deleteInput) {
+        deleteInput.checked = true;
+      }
+      row.style.display = "none";
+    });
+  }
+
+  function addRow(targetKey) {
+    const config = formsetMap[targetKey];
+    const totalInput = document.getElementById(config.totalId);
+    const rowsContainer = document.getElementById(config.rowsId);
+    const template = document.getElementById(config.templateId);
+
+    const nextIndex = parseInt(totalInput.value, 10);
+    const html = template.innerHTML.replace(/__prefix__/g, nextIndex);
+    const wrapper = document.createElement("tbody");
+    wrapper.innerHTML = html.trim();
+    const row = wrapper.firstElementChild;
+
+    removeEmptyPlaceholder(rowsContainer);
+    rowsContainer.appendChild(row);
+    addDeleteBehavior(row);
+    totalInput.value = nextIndex + 1;
+  }
+
+  document.querySelectorAll(".add-row").forEach((button) => {
+    button.addEventListener("click", () => addRow(button.dataset.target));
+  });
+
+  document.querySelectorAll(".form-row").forEach(addDeleteBehavior);
+</script>
 {% endblock %}

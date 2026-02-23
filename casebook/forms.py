@@ -98,7 +98,7 @@ CaseAssetFormSet = inlineformset_factory(
         "format": forms.TextInput(attrs={"class": "input"}),
         "alt_text": forms.TextInput(attrs={"class": "input"}),
     },
-    extra=5,
+    extra=0,
     can_delete=True,
 )
 
@@ -113,7 +113,7 @@ CaseMetricFormSet = inlineformset_factory(
         "source": forms.TextInput(attrs={"class": "input"}),
         "notes": forms.TextInput(attrs={"class": "input"}),
     },
-    extra=5,
+    extra=0,
     can_delete=True,
 )
 
@@ -126,6 +126,6 @@ CaseChannelSpendFormSet = inlineformset_factory(
         "dates": forms.TextInput(attrs={"class": "input"}),
         "notes": forms.TextInput(attrs={"class": "input"}),
     },
-    extra=5,
+    extra=0,
     can_delete=True,
 )

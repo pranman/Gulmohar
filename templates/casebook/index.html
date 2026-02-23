@@ -94,7 +94,7 @@
                         <td>
                             <form method="post" action="{% url 'casebook_delete' slug=case.slug %}" onsubmit="return confirm('Delete this campaign and all related records?');">
                                 {% csrf_token %}
-                                <button class="button is-small is-danger is-light" type="submit" title="Delete campaign">🗑</button>
+                                <button class="button is-small is-danger is-light" type="submit" title="Delete campaign">&#128465;</button>
                             </form>
                         </td>
                     </tr>
