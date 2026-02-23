@@ -38,12 +38,12 @@ class CaseStudyForm(forms.ModelForm):
             "spend_notes",
             "proof_links",
             "press_mentions",
-            "notes_private",
+            "notes",
         ]
         widgets = {
-            "date_start": forms.DateInput(attrs={"type": "date"}),
-            "date_end": forms.DateInput(attrs={"type": "date"}),
-            "sort_date": forms.DateInput(attrs={"type": "date"}),
+            "date_start": forms.TextInput(attrs={"placeholder": "2024 or January 2024"}),
+            "date_end": forms.TextInput(attrs={"placeholder": "2024 or March 2024"}),
+            "sort_date": forms.TextInput(attrs={"placeholder": "Optional sort label, e.g. 2024"}),
         }
 
 
@@ -53,6 +53,7 @@ CaseAssetFormSet = inlineformset_factory(
     fields=[
         "asset_type",
         "image",
+        "video",
         "caption",
         "platform",
         "format",
@@ -60,7 +61,7 @@ CaseAssetFormSet = inlineformset_factory(
         "is_hero",
         "alt_text",
     ],
-    widgets={"date": forms.DateInput(attrs={"type": "date"})},
+    widgets={"date": forms.TextInput(attrs={"placeholder": "January 2024"})},
     extra=1,
     can_delete=True,
 )

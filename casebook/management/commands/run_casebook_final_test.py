@@ -3,6 +3,7 @@ from datetime import date
 from pathlib import Path
 from uuid import uuid4
 
+from django.core.files.base import ContentFile
 from django.core.files.images import ImageFile
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
@@ -32,7 +33,7 @@ def _build_test_assets(test_dir):
 
 
 class Command(BaseCommand):
-    help = "Create lorem test data, attach generated images, export casebook JSON, and validate output."
+    help = "Create lorem test data, attach generated images/videos, export casebook JSON, and validate output."
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -55,8 +56,9 @@ class Command(BaseCommand):
             title=f"Lorem Ipsum Campaign {uuid4().hex[:8]}",
             client_or_org="Lorem Org",
             brand_or_campaign="Ipsum Launch",
-            date_start=date(2025, 1, 1),
-            date_end=date(2025, 3, 31),
+            date_start="January 2025",
+            date_end="March 2025",
+            sort_date="2025",
             location="UK / US / Global",
             status=CaseStudy.STATUS_PUBLISHABLE,
             confidentiality=CaseStudy.CONFIDENTIALITY_PUBLIC,
@@ -79,7 +81,7 @@ class Command(BaseCommand):
             spend_notes="Approximate range excluding production.",
             proof_links="https://example.com/report\nhttps://example.com/dashboard",
             press_mentions="https://example.com/press-mention",
-            notes_private="Private retrospective note for internal reference.",
+            notes="Public portfolio note for context and reflection.",
         )
         case.tags.add("lorem", "ipsum", "casebook")
 
@@ -137,10 +139,31 @@ class Command(BaseCommand):
                 caption=f"Lorem caption {idx + 1}",
                 platform="Meta",
                 format="1:1" if idx == 0 else "9:16",
-                date=date(2025, 1, 15 + idx),
+                date=f"January {15 + idx}, 2025",
                 is_hero=idx == 0,
                 alt_text=f"Lorem alt text {idx + 1}",
             )
+
+        document_model = CaseAsset._meta.get_field("video").remote_field.model
+        video_doc = document_model(
+            title=f"Test video {uuid4().hex[:6]}",
+            collection=root_collection,
+            file=ContentFile(b"fake-mp4-bytes-for-local-testing", name="demo_video.mp4"),
+        )
+        video_doc.full_clean()
+        video_doc.save()
+
+        CaseAsset.objects.create(
+            case_study=case,
+            asset_type=CaseAsset.TYPE_VIDEO,
+            video=video_doc,
+            caption="Lorem video caption",
+            platform="TikTok",
+            format="9:16",
+            date="February 2025",
+            is_hero=False,
+            alt_text="Video explainer preview",
+        )
 
         call_command("export_casebook", output=str(output))
 
@@ -168,7 +191,12 @@ class Command(BaseCommand):
         missing = [key for key in required_case_keys if key not in first_case]
         if missing:
             raise CommandError(f"Case payload missing required keys: {', '.join(missing)}")
-        if "notes_private" in first_case:
-            raise CommandError("notes_private should not be exported by default.")
+        if "notes" in first_case:
+            raise CommandError("notes should not be exported by default.")
+
+        call_command("export_casebook", output=str(output), include_notes=True)
+        payload_with_notes = json.loads(output.read_text(encoding="utf-8"))
+        if "notes" not in payload_with_notes["cases"][0]:
+            raise CommandError("notes should be exported when include_notes flag is used.")
 
         self.stdout.write(self.style.SUCCESS(f"Final casebook test completed successfully: {output}"))

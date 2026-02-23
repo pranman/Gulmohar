@@ -1,3 +1,5 @@
+from uuid import uuid4
+
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.text import slugify
@@ -49,7 +51,11 @@ class CaseStudy(index.Indexed, ClusterableModel):
         (CURRENCY_OTHER, "Other"),
     ]
 
-    title = models.CharField(max_length=255)
+    title = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text="Campaign title. Optional for early drafts.",
+    )
     slug = models.SlugField(
         unique=True,
         blank=True,
@@ -65,8 +71,18 @@ class CaseStudy(index.Indexed, ClusterableModel):
         blank=True,
         help_text="Brand, product, campaign, or initiative name.",
     )
-    date_start = models.DateField(null=True, blank=True, help_text="When the work began.")
-    date_end = models.DateField(null=True, blank=True, help_text="When the work ended.")
+    date_start = models.CharField(
+        max_length=100,
+        null=True,
+        blank=True,
+        help_text='Flexible start date text (e.g. "2024", "January 2024", "Q1 2024").',
+    )
+    date_end = models.CharField(
+        max_length=100,
+        null=True,
+        blank=True,
+        help_text='Flexible end date text (e.g. "2024", "March 2024", "Q2 2024").',
+    )
     location = models.CharField(
         max_length=255,
         blank=True,
@@ -76,22 +92,24 @@ class CaseStudy(index.Indexed, ClusterableModel):
         max_length=20,
         choices=STATUS_CHOICES,
         default=STATUS_DRAFT,
+        blank=True,
         help_text="Workflow status for inclusion readiness.",
     )
     confidentiality = models.CharField(
         max_length=20,
         choices=CONFIDENTIALITY_CHOICES,
         default=CONFIDENTIALITY_PUBLIC,
+        blank=True,
         help_text="Content sensitivity and privacy level.",
     )
     one_liner = models.TextField(blank=True, help_text="One or two sentence summary of the case.")
-    objective = models.TextField(help_text="What success meant for this case.")
+    objective = models.TextField(blank=True, help_text="What success meant for this case.")
     audience = models.TextField(blank=True, help_text="Who this was for and why they mattered.")
     constraints = models.TextField(
         blank=True,
         help_text="Known restrictions: time, budget, legal, platform, etc.",
     )
-    strategy = models.TextField(help_text="The strategy used to solve the objective.")
+    strategy = models.TextField(blank=True, help_text="The strategy used to solve the objective.")
     creative_direction = models.TextField(
         blank=True,
         help_text="Narrative/visual direction and creative rationale.",
@@ -105,6 +123,7 @@ class CaseStudy(index.Indexed, ClusterableModel):
         help_text="How work was shipped and distributed.",
     )
     my_contribution = models.TextField(
+        blank=True,
         help_text="Your explicit ownership and decision-making responsibilities.",
     )
     team_and_partners = models.TextField(
@@ -151,16 +170,17 @@ class CaseStudy(index.Indexed, ClusterableModel):
         help_text="One URL per line that supports this case.",
     )
     press_mentions = models.TextField(blank=True, help_text="One citation or link per line.")
-    notes_private = models.TextField(
+    notes = models.TextField(
         blank=True,
-        help_text="Internal notes excluded from export by default.",
+        help_text="Public portfolio notes and context.",
     )
 
     tags = ClusterTaggableManager(through=CaseStudyTag, blank=True)
-    sort_date = models.DateField(
+    sort_date = models.CharField(
+        max_length=100,
         null=True,
         blank=True,
-        help_text="Admin sorting date. Defaults to end date, then start date.",
+        help_text='Optional sortable date label (e.g. "January 2024", "2024"). Defaults to end/start text.',
     )
 
     search_fields = [
@@ -211,7 +231,7 @@ class CaseStudy(index.Indexed, ClusterableModel):
         InlinePanel("channel_spend", label="Channel spend"),
     ]
     assets_panels = [InlinePanel("assets", label="Assets")]
-    private_panels = [FieldPanel("notes_private")]
+    private_panels = [FieldPanel("notes")]
 
     edit_handler = TabbedInterface(
         [
@@ -242,8 +262,15 @@ class CaseStudy(index.Indexed, ClusterableModel):
             )
 
     def save(self, *args, **kwargs):
-        if not self.slug and self.title:
-            self.slug = slugify(self.title)
+        if not self.slug:
+            source = self.title or self.brand_or_campaign or self.client_or_org or f"campaign-{uuid4().hex[:8]}"
+            base_slug = slugify(source) or f"campaign-{uuid4().hex[:8]}"
+            slug_candidate = base_slug
+            counter = 2
+            while CaseStudy.objects.filter(slug=slug_candidate).exclude(pk=self.pk).exists():
+                slug_candidate = f"{base_slug}-{counter}"
+                counter += 1
+            self.slug = slug_candidate
         if not self.sort_date:
             self.sort_date = self.date_end or self.date_start
         super().save(*args, **kwargs)
@@ -254,14 +281,14 @@ class CaseAsset(Orderable):
     TYPE_CREATIVE = "creative"
     TYPE_DASHBOARD = "dashboard"
     TYPE_PRESS = "press"
-    TYPE_VIDEO_STILL = "video_still"
+    TYPE_VIDEO = "video"
     TYPE_OTHER = "other"
     TYPE_CHOICES = [
         (TYPE_AD_SCREENSHOT, "Ad Screenshot"),
         (TYPE_CREATIVE, "Creative"),
         (TYPE_DASHBOARD, "Dashboard"),
         (TYPE_PRESS, "Press"),
-        (TYPE_VIDEO_STILL, "Video still"),
+        (TYPE_VIDEO, "Video"),
         (TYPE_OTHER, "Other"),
     ]
 
@@ -272,7 +299,21 @@ class CaseAsset(Orderable):
         default=TYPE_OTHER,
         help_text="Asset category for filtering and export context.",
     )
-    image = models.ForeignKey("wagtailimages.Image", on_delete=models.CASCADE, related_name="+")
+    image = models.ForeignKey(
+        "wagtailimages.Image",
+        on_delete=models.CASCADE,
+        related_name="+",
+        null=True,
+        blank=True,
+    )
+    video = models.ForeignKey(
+        "wagtaildocs.Document",
+        on_delete=models.CASCADE,
+        related_name="+",
+        null=True,
+        blank=True,
+        help_text="Optional uploaded video document.",
+    )
     caption = models.TextField(blank=True, help_text="Context or explanation for this asset.")
     platform = models.CharField(
         max_length=100,
@@ -284,10 +325,11 @@ class CaseAsset(Orderable):
         blank=True,
         help_text='Media format (e.g. "1:1", "9:16", "16:9", "carousel").',
     )
-    date = models.DateField(
+    date = models.CharField(
+        max_length=100,
         null=True,
         blank=True,
-        help_text="Date represented by this asset, if relevant.",
+        help_text='Flexible date text for this asset (e.g. "January 2024").',
     )
     is_hero = models.BooleanField(
         default=False,
@@ -298,6 +340,7 @@ class CaseAsset(Orderable):
     panels = [
         FieldPanel("asset_type"),
         FieldPanel("image"),
+        FieldPanel("video"),
         FieldPanel("caption"),
         FieldPanel("platform"),
         FieldPanel("format"),
@@ -311,6 +354,10 @@ class CaseAsset(Orderable):
 
     def clean(self):
         super().clean()
+        if not self.image and not self.video:
+            raise ValidationError("Provide either an image or a video document.")
+        if self.image and self.video:
+            raise ValidationError("Attach only one media type per asset: image or video.")
         if self.is_hero and self.case_study_id:
             queryset = self.case_study.assets.filter(is_hero=True)
             if self.pk:
@@ -323,10 +370,12 @@ class CaseMetric(Orderable):
     case_study = ParentalKey("casebook.CaseStudy", on_delete=models.CASCADE, related_name="metrics")
     metric_name = models.CharField(
         max_length=255,
+        blank=True,
         help_text='Metric label (e.g. "ROAS", "Reach", "Revenue/day").',
     )
     value = models.CharField(
         max_length=255,
+        blank=True,
         help_text='Metric value, allowing flexible units (e.g. "ROAS 3.2", "4.5m users").',
     )
     timeframe = models.CharField(

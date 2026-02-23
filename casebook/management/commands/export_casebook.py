@@ -14,34 +14,44 @@ def _split_lines(value):
 
 
 def _serialize_asset(asset):
-    image_urls = {"original": asset.image.file.url}
-    for key, spec in [("fill_1600x900", "fill-1600x900"), ("max_1200x1200", "max-1200x1200")]:
-        try:
-            image_urls[key] = asset.image.get_rendition(spec).url
-        except Exception:
-            image_urls[key] = None
+    image_urls = None
+    video_url = None
+    if asset.image:
+        image_urls = {"original": asset.image.file.url}
+        for key, spec in [("fill_1600x900", "fill-1600x900"), ("max_1200x1200", "max-1200x1200")]:
+            try:
+                image_urls[key] = asset.image.get_rendition(spec).url
+            except Exception:
+                image_urls[key] = None
+    if asset.video:
+        video_url = asset.video.file.url
 
     return {
         "type": asset.asset_type,
         "caption": asset.caption,
         "platform": asset.platform,
         "format": asset.format,
-        "date": asset.date.isoformat() if asset.date else None,
+        "date": asset.date,
         "is_hero": asset.is_hero,
         "alt_text": asset.alt_text,
         "image_urls": image_urls,
+        "video": {
+            "title": asset.video.title if asset.video else None,
+            "url": video_url,
+            "filename": asset.video.file.name if asset.video else None,
+        },
     }
 
 
-def _serialize_case(case, include_private_notes=False):
+def _serialize_case(case, include_notes=False):
     payload = {
         "title": case.title,
         "slug": case.slug,
         "client_or_org": case.client_or_org,
         "brand_or_campaign": case.brand_or_campaign,
-        "date_start": case.date_start.isoformat() if case.date_start else None,
-        "date_end": case.date_end.isoformat() if case.date_end else None,
-        "sort_date": case.sort_date.isoformat() if case.sort_date else None,
+        "date_start": case.date_start,
+        "date_end": case.date_end,
+        "sort_date": case.sort_date,
         "location": case.location,
         "status": case.status,
         "confidentiality": case.confidentiality,
@@ -85,10 +95,10 @@ def _serialize_case(case, include_private_notes=False):
             }
             for spend in case.channel_spend.all()
         ],
-        "assets": [_serialize_asset(asset) for asset in case.assets.select_related("image").all()],
+        "assets": [_serialize_asset(asset) for asset in case.assets.select_related("image", "video").all()],
     }
-    if include_private_notes:
-        payload["notes_private"] = case.notes_private
+    if include_notes:
+        payload["notes"] = case.notes
     return payload
 
 
@@ -98,40 +108,24 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument("--output", required=True, help="Path to output JSON file.")
         parser.add_argument(
-            "--include-sensitive",
+            "--include-notes",
             action="store_true",
-            help="Include case studies marked as status=sensitive.",
-        )
-        parser.add_argument(
-            "--include-private",
-            action="store_true",
-            help="Include case studies with confidentiality=private.",
-        )
-        parser.add_argument(
-            "--include-private-notes",
-            action="store_true",
-            help="Include notes_private in exported payload.",
+            help="Include campaign notes in exported payload.",
         )
 
     def handle(self, *args, **options):
         output = Path(options["output"])
-        include_sensitive = options["include_sensitive"]
-        include_private = options["include_private"]
-        include_private_notes = options["include_private_notes"]
+        include_notes = options["include_notes"]
 
         queryset = CaseStudy.objects.prefetch_related(
             "tags",
             "metrics",
             "channel_spend",
             "assets__image",
+            "assets__video",
         ).order_by("-sort_date", "-date_end", "-date_start", "title")
 
-        if not include_sensitive:
-            queryset = queryset.exclude(status=CaseStudy.STATUS_SENSITIVE)
-        if not include_private:
-            queryset = queryset.exclude(confidentiality=CaseStudy.CONFIDENTIALITY_PRIVATE)
-
-        cases = [_serialize_case(case, include_private_notes=include_private_notes) for case in queryset]
+        cases = [_serialize_case(case, include_notes=include_notes) for case in queryset]
 
         payload = {
             "generated_at": datetime.now(timezone.utc).isoformat(),
