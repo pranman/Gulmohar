@@ -11,7 +11,7 @@
 
 ## Current step
 
-Implementing tabular add/remove row UX for assets, metrics, and channel spend with explicit add/trash controls.
+Completed requested v2 UX changes and pushed all checkpoints.
 
 ## Validation results (refresh run)
 
@@ -50,5 +50,7 @@ Implementing tabular add/remove row UX for assets, metrics, and channel spend wi
   - Commit: `7a84474`
   - Scope: organization/industry models, sector field, campaign delete route, and related UI/filter updates
   - Push: `main` updated on origin
-- Checkpoint V2-R2 pending:
+- Checkpoint V2-R2 complete:
+  - Commit: `1161690`
   - Scope: tabular add/remove UX for assets/metrics/channel spend with add/trash controls
+  - Push: `main` updated on origin
