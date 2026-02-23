@@ -3,90 +3,136 @@
 {% block title %}{% if mode == 'edit' %}Edit{% else %}Create{% endif %} Case Study{% endblock %}
 
 {% block content %}
-<main style="max-width: 1100px; margin: 2rem auto; padding: 0 1rem;">
-    <p><a href="{% url 'casebook_index' %}">Back to case list</a></p>
-    <h1>{% if mode == "edit" %}Edit{% else %}Create{% endif %} Case Study</h1>
-
-    <form method="post">
-        {% csrf_token %}
-
-        <section style="margin-bottom: 2rem;">
-            <h2>Case study fields</h2>
-            {% for field in case_form %}
-            <div style="margin-bottom: 1rem;">
-                <label for="{{ field.id_for_label }}"><strong>{{ field.label }}</strong></label><br />
-                {{ field }}
-                {% if field.help_text %}
-                <div style="font-size: 0.9rem; color: #666;">{{ field.help_text }}</div>
-                {% endif %}
-                {% for error in field.errors %}
-                <div style="color: #b30000;">{{ error }}</div>
-                {% endfor %}
+<section class="section">
+    <div class="container is-max-desktop">
+        <div class="level">
+            <div class="level-left">
+                <div>
+                    <a href="{% url 'casebook_index' %}">&larr; Back to case list</a>
+                    <h1 class="title is-3 mt-2">{% if mode == "edit" %}Edit Campaign{% else %}Create Campaign{% endif %}</h1>
+                    <p class="subtitle is-6">All fields are optional. Use flexible date text like <em>2024</em> or <em>January 2024</em>.</p>
+                </div>
             </div>
-            {% endfor %}
-            {% for error in case_form.non_field_errors %}
-            <div style="color: #b30000;">{{ error }}</div>
-            {% endfor %}
-        </section>
+        </div>
 
-        <section style="margin-bottom: 2rem;">
-            <h2>Assets</h2>
-            {{ asset_formset.management_form }}
-            {% for form in asset_formset %}
-            <fieldset style="border: 1px solid #ccc; margin-bottom: 1rem; padding: 1rem;">
-                <legend>Asset {{ forloop.counter }}</legend>
-                {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
-                {% for field in form.visible_fields %}
-                <div style="margin-bottom: 0.5rem;">
-                    <label for="{{ field.id_for_label }}">{{ field.label }}</label><br />
-                    {{ field }}
-                    {% if field.help_text %}<div style="font-size: 0.9rem; color: #666;">{{ field.help_text }}</div>{% endif %}
-                    {% for error in field.errors %}<div style="color: #b30000;">{{ error }}</div>{% endfor %}
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <nav class="tabs is-boxed is-small mb-4">
+                <ul>
+                    <li><a href="#campaign-fields">Campaign</a></li>
+                    <li><a href="#assets">Assets</a></li>
+                    <li><a href="#metrics">Metrics</a></li>
+                    <li><a href="#channel-spend">Channel Spend</a></li>
+                </ul>
+            </nav>
+
+            <section id="campaign-fields" class="box">
+                <h2 class="title is-5">Campaign Fields</h2>
+                <div class="columns is-multiline">
+                    {% for field in case_form %}
+                    <div class="column is-6">
+                        <div class="field">
+                            <label class="label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            <div class="control">{{ field }}</div>
+                            {% if field.help_text %}
+                            <p class="help">{{ field.help_text }}</p>
+                            {% endif %}
+                            {% for error in field.errors %}
+                            <p class="help is-danger">{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% for error in case_form.non_field_errors %}
+                <p class="help is-danger">{{ error }}</p>
+                {% endfor %}
+            </section>
+
+            <section id="assets" class="box">
+                <h2 class="title is-5">Assets (images or video files)</h2>
+                <p class="mb-4">You can attach multiple items. Use either image or video per asset row.</p>
+                {{ asset_formset.management_form }}
+                {% for form in asset_formset %}
+                <div class="card mb-4">
+                    <div class="card-content">
+                        <h3 class="title is-6">Asset {{ forloop.counter }}</h3>
+                        {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+                        <div class="columns is-multiline">
+                            {% for field in form.visible_fields %}
+                            <div class="column is-6">
+                                <div class="field">
+                                    <label class="label">{{ field.label }}</label>
+                                    <div class="control">{{ field }}</div>
+                                    {% if field.help_text %}<p class="help">{{ field.help_text }}</p>{% endif %}
+                                    {% for error in field.errors %}<p class="help is-danger">{{ error }}</p>{% endfor %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
                 {% endfor %}
-            </fieldset>
-            {% endfor %}
-        </section>
+            </section>
 
-        <section style="margin-bottom: 2rem;">
-            <h2>Metrics</h2>
-            {{ metric_formset.management_form }}
-            {% for form in metric_formset %}
-            <fieldset style="border: 1px solid #ccc; margin-bottom: 1rem; padding: 1rem;">
-                <legend>Metric {{ forloop.counter }}</legend>
-                {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
-                {% for field in form.visible_fields %}
-                <div style="margin-bottom: 0.5rem;">
-                    <label for="{{ field.id_for_label }}">{{ field.label }}</label><br />
-                    {{ field }}
-                    {% if field.help_text %}<div style="font-size: 0.9rem; color: #666;">{{ field.help_text }}</div>{% endif %}
-                    {% for error in field.errors %}<div style="color: #b30000;">{{ error }}</div>{% endfor %}
+            <section id="metrics" class="box">
+                <h2 class="title is-5">Metrics</h2>
+                {{ metric_formset.management_form }}
+                {% for form in metric_formset %}
+                <div class="card mb-4">
+                    <div class="card-content">
+                        <h3 class="title is-6">Metric {{ forloop.counter }}</h3>
+                        {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+                        <div class="columns is-multiline">
+                            {% for field in form.visible_fields %}
+                            <div class="column is-6">
+                                <div class="field">
+                                    <label class="label">{{ field.label }}</label>
+                                    <div class="control">{{ field }}</div>
+                                    {% if field.help_text %}<p class="help">{{ field.help_text }}</p>{% endif %}
+                                    {% for error in field.errors %}<p class="help is-danger">{{ error }}</p>{% endfor %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
                 {% endfor %}
-            </fieldset>
-            {% endfor %}
-        </section>
+            </section>
 
-        <section style="margin-bottom: 2rem;">
-            <h2>Channel spend</h2>
-            {{ channel_spend_formset.management_form }}
-            {% for form in channel_spend_formset %}
-            <fieldset style="border: 1px solid #ccc; margin-bottom: 1rem; padding: 1rem;">
-                <legend>Channel spend {{ forloop.counter }}</legend>
-                {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
-                {% for field in form.visible_fields %}
-                <div style="margin-bottom: 0.5rem;">
-                    <label for="{{ field.id_for_label }}">{{ field.label }}</label><br />
-                    {{ field }}
-                    {% if field.help_text %}<div style="font-size: 0.9rem; color: #666;">{{ field.help_text }}</div>{% endif %}
-                    {% for error in field.errors %}<div style="color: #b30000;">{{ error }}</div>{% endfor %}
+            <section id="channel-spend" class="box">
+                <h2 class="title is-5">Channel Spend</h2>
+                {{ channel_spend_formset.management_form }}
+                {% for form in channel_spend_formset %}
+                <div class="card mb-4">
+                    <div class="card-content">
+                        <h3 class="title is-6">Channel Spend {{ forloop.counter }}</h3>
+                        {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+                        <div class="columns is-multiline">
+                            {% for field in form.visible_fields %}
+                            <div class="column is-6">
+                                <div class="field">
+                                    <label class="label">{{ field.label }}</label>
+                                    <div class="control">{{ field }}</div>
+                                    {% if field.help_text %}<p class="help">{{ field.help_text }}</p>{% endif %}
+                                    {% for error in field.errors %}<p class="help is-danger">{{ error }}</p>{% endfor %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
                 {% endfor %}
-            </fieldset>
-            {% endfor %}
-        </section>
+            </section>
 
-        <button type="submit">{% if mode == "edit" %}Save changes{% else %}Create case study{% endif %}</button>
-    </form>
-</main>
+            <div class="box">
+                <div class="buttons">
+                    <button class="button is-primary" type="submit">{% if mode == "edit" %}Save Campaign{% else %}Create Campaign{% endif %}</button>
+                    <a class="button is-light" href="{% url 'casebook_index' %}">Cancel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
 {% endblock %}

@@ -50,7 +50,7 @@ def casebook_index(request):
 
 def casebook_detail(request, slug):
     case = get_object_or_404(
-        CaseStudy.objects.prefetch_related("assets__image", "metrics", "channel_spend", "tags"),
+        CaseStudy.objects.prefetch_related("assets__image", "assets__video", "metrics", "channel_spend", "tags"),
         slug=slug,
     )
     return render(request, "casebook/detail.html", {"case": case})
@@ -58,7 +58,7 @@ def casebook_detail(request, slug):
 
 def _build_case_form_bundle(request, instance=None):
     case_form = CaseStudyForm(request.POST or None, instance=instance)
-    asset_formset = CaseAssetFormSet(request.POST or None, instance=instance, prefix="assets")
+    asset_formset = CaseAssetFormSet(request.POST or None, request.FILES or None, instance=instance, prefix="assets")
     metric_formset = CaseMetricFormSet(request.POST or None, instance=instance, prefix="metrics")
     channel_spend_formset = CaseChannelSpendFormSet(
         request.POST or None,

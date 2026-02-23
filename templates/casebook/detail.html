@@ -4,60 +4,90 @@
 {% block title %}{{ case.title }}{% endblock %}
 
 {% block content %}
-<main style="max-width: 1000px; margin: 2rem auto; padding: 0 1rem;">
-    <p><a href="{% url 'casebook_index' %}">Back to case list</a> | <a href="{% url 'casebook_edit' slug=case.slug %}">Edit this case</a></p>
-    <h1>{{ case.title }}</h1>
-    <p>{{ case.one_liner }}</p>
-    <p>
-        <strong>Status:</strong> {{ case.get_status_display }} |
-        <strong>Confidentiality:</strong> {{ case.get_confidentiality_display }}
-    </p>
-    <p><strong>Client/Org:</strong> {{ case.client_or_org|default:"-" }}</p>
-    <p><strong>Brand/Campaign:</strong> {{ case.brand_or_campaign|default:"-" }}</p>
-    <p><strong>Dates:</strong> {{ case.date_start|default:"-" }} to {{ case.date_end|default:"-" }}</p>
+<section class="section">
+    <div class="container is-max-desktop">
+        <div class="level">
+            <div class="level-left">
+                <div>
+                    <h1 class="title is-3">{{ case.title|default:"Untitled Campaign" }}</h1>
+                    <p class="subtitle is-6">{{ case.one_liner|default:"No summary added yet." }}</p>
+                </div>
+            </div>
+            <div class="level-right">
+                <div class="buttons">
+                    <a class="button is-light" href="{% url 'casebook_index' %}">Back to list</a>
+                    <a class="button is-link" href="{% url 'casebook_edit' slug=case.slug %}">Edit</a>
+                </div>
+            </div>
+        </div>
 
-    <h2>Objective</h2>
-    <p>{{ case.objective|linebreaksbr }}</p>
-    <h2>Strategy</h2>
-    <p>{{ case.strategy|linebreaksbr }}</p>
-    <h2>My Contribution</h2>
-    <p>{{ case.my_contribution|linebreaksbr }}</p>
-    <h2>Production And Tooling</h2>
-    <p>{{ case.production_and_tooling|linebreaksbr }}</p>
-    <h2>Delivery And Distribution</h2>
-    <p>{{ case.delivery_and_distribution|linebreaksbr }}</p>
-    <h2>Results Summary</h2>
-    <p>{{ case.results_summary|linebreaksbr }}</p>
+        <div class="box">
+            <div class="columns is-multiline">
+                <div class="column is-4"><strong>Client/Org:</strong> {{ case.client_or_org|default:"-" }}</div>
+                <div class="column is-4"><strong>Brand/Campaign:</strong> {{ case.brand_or_campaign|default:"-" }}</div>
+                <div class="column is-4"><strong>Dates:</strong> {{ case.date_start|default:"-" }} to {{ case.date_end|default:"-" }}</div>
+                <div class="column is-4"><strong>Status:</strong> {{ case.get_status_display|default:"-" }}</div>
+                <div class="column is-4"><strong>Confidentiality:</strong> {{ case.get_confidentiality_display|default:"-" }}</div>
+                <div class="column is-4"><strong>Sort Date:</strong> {{ case.sort_date|default:"-" }}</div>
+            </div>
+        </div>
 
-    <h2>Metrics</h2>
-    <ul>
-        {% for metric in case.metrics.all %}
-        <li><strong>{{ metric.metric_name }}</strong>: {{ metric.value }} ({{ metric.timeframe|default:"n/a" }}, {{ metric.source|default:"unknown source" }})</li>
-        {% empty %}
-        <li>No metrics captured.</li>
-        {% endfor %}
-    </ul>
+        <div class="content box">
+            <h2>Objective</h2><p>{{ case.objective|linebreaksbr|default:"-" }}</p>
+            <h2>Strategy</h2><p>{{ case.strategy|linebreaksbr|default:"-" }}</p>
+            <h2>My Contribution</h2><p>{{ case.my_contribution|linebreaksbr|default:"-" }}</p>
+            <h2>Production and Tooling</h2><p>{{ case.production_and_tooling|linebreaksbr|default:"-" }}</p>
+            <h2>Delivery and Distribution</h2><p>{{ case.delivery_and_distribution|linebreaksbr|default:"-" }}</p>
+            <h2>Results Summary</h2><p>{{ case.results_summary|linebreaksbr|default:"-" }}</p>
+            <h2>Notes</h2><p>{{ case.notes|linebreaksbr|default:"-" }}</p>
+        </div>
 
-    <h2>Channel Spend</h2>
-    <ul>
-        {% for spend in case.channel_spend.all %}
-        <li>{{ spend.channel }} - {{ spend.spend_currency }} {{ spend.spend_amount|default:"n/a" }} ({{ spend.dates|default:"no date range" }})</li>
-        {% empty %}
-        <li>No channel spend captured.</li>
-        {% endfor %}
-    </ul>
+        <div class="box">
+            <h2 class="title is-5">Metrics</h2>
+            <ul>
+                {% for metric in case.metrics.all %}
+                <li><strong>{{ metric.metric_name|default:"Metric" }}</strong>: {{ metric.value|default:"-" }} ({{ metric.timeframe|default:"n/a" }}, {{ metric.source|default:"unknown" }})</li>
+                {% empty %}
+                <li>No metrics captured.</li>
+                {% endfor %}
+            </ul>
+        </div>
 
-    <h2>Assets</h2>
-    {% for asset in case.assets.all %}
-    <article style="border: 1px solid #ddd; padding: 1rem; margin-bottom: 1rem;">
-        <p><strong>{{ asset.get_asset_type_display }}</strong> {% if asset.is_hero %}(Hero){% endif %}</p>
-        {% image asset.image width-800 as display_image %}
-        <img src="{{ display_image.url }}" alt="{{ asset.alt_text|default:asset.caption|default:case.title }}" style="max-width: 100%; height: auto;" />
-        <p>{{ asset.caption|default:"No caption." }}</p>
-        <p>{{ asset.platform|default:"-" }} | {{ asset.format|default:"-" }} | {{ asset.date|default:"-" }}</p>
-    </article>
-    {% empty %}
-    <p>No assets attached.</p>
-    {% endfor %}
-</main>
+        <div class="box">
+            <h2 class="title is-5">Channel Spend</h2>
+            <ul>
+                {% for spend in case.channel_spend.all %}
+                <li>{{ spend.channel|default:"-" }} - {{ spend.spend_currency|default:"-" }} {{ spend.spend_amount|default:"n/a" }} ({{ spend.dates|default:"no date range" }})</li>
+                {% empty %}
+                <li>No channel spend captured.</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="box">
+            <h2 class="title is-5">Assets</h2>
+            {% for asset in case.assets.all %}
+            <article class="card mb-4">
+                <div class="card-content">
+                    <p class="title is-6">{{ asset.get_asset_type_display }} {% if asset.is_hero %}<span class="tag is-warning is-light">Hero</span>{% endif %}</p>
+                    {% if asset.image %}
+                        {% image asset.image width-1000 as display_image %}
+                        <img src="{{ display_image.url }}" alt="{{ asset.alt_text|default:asset.caption|default:case.title }}" />
+                    {% elif asset.video %}
+                        <video controls style="width: 100%;">
+                            <source src="{{ asset.video.file.url }}">
+                            Your browser does not support embedded video playback.
+                        </video>
+                        <p class="mt-2"><a href="{{ asset.video.file.url }}" target="_blank">Open video in new tab</a></p>
+                    {% endif %}
+                    <p class="mt-3">{{ asset.caption|default:"No caption." }}</p>
+                    <p class="is-size-7 has-text-grey">{{ asset.platform|default:"-" }} | {{ asset.format|default:"-" }} | {{ asset.date|default:"-" }}</p>
+                </div>
+            </article>
+            {% empty %}
+            <p>No assets attached.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
 {% endblock %}

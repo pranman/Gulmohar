@@ -3,67 +3,105 @@
 {% block title %}Casebook{% endblock %}
 
 {% block content %}
-<main style="max-width: 1100px; margin: 2rem auto; padding: 0 1rem;">
-    <h1>Portfolio Casebook</h1>
-    <p>Local case study browser and editor.</p>
+<section class="section">
+    <div class="container is-max-desktop">
+        <div class="level mb-4">
+            <div class="level-left">
+                <div>
+                    <h1 class="title is-3 mb-2">Portfolio Casebook</h1>
+                    <p class="subtitle is-6 mb-0">Capture campaigns quickly and keep structured portfolio-ready data.</p>
+                </div>
+            </div>
+            <div class="level-right">
+                <div class="buttons">
+                    <a class="button is-primary" href="{% url 'casebook_create' %}">New Campaign</a>
+                    <a class="button is-light" href="/admin/snippets/casebook/casestudy/">Snippet Admin</a>
+                </div>
+            </div>
+        </div>
 
-    <p>
-        <a href="{% url 'casebook_create' %}">Create a new case study</a>
-        | <a href="/admin/snippets/casebook/casestudy/">Open snippet admin</a>
-    </p>
+        <div class="box">
+            <form method="get">
+                <div class="columns is-multiline">
+                    <div class="column is-4">
+                        <label class="label">Search</label>
+                        <input class="input" type="text" name="q" value="{{ query }}" placeholder="title, client, brand, one-liner">
+                    </div>
+                    <div class="column is-2">
+                        <label class="label">Status</label>
+                        <div class="select is-fullwidth">
+                            <select name="status">
+                                <option value="">Any status</option>
+                                {% for key, label in status_choices %}
+                                <option value="{{ key }}" {% if status == key %}selected{% endif %}>{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="column is-3">
+                        <label class="label">Confidentiality</label>
+                        <div class="select is-fullwidth">
+                            <select name="confidentiality">
+                                <option value="">Any confidentiality</option>
+                                {% for key, label in confidentiality_choices %}
+                                <option value="{{ key }}" {% if confidentiality == key %}selected{% endif %}>{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="column is-3">
+                        <label class="label">Tag</label>
+                        <input class="input" type="text" name="tag" value="{{ tag }}" placeholder="performance, launch">
+                    </div>
+                </div>
+                <div class="buttons">
+                    <button class="button is-link" type="submit">Apply Filters</button>
+                    <a class="button is-light" href="{% url 'casebook_index' %}">Reset</a>
+                </div>
+            </form>
+        </div>
 
-    <form method="get" style="display: grid; grid-template-columns: repeat(5, minmax(120px, 1fr)); gap: 0.75rem; margin: 1.5rem 0;">
-        <input type="text" name="q" value="{{ query }}" placeholder="Search title/client/brand/one-liner" />
-        <select name="status">
-            <option value="">Any status</option>
-            {% for key, label in status_choices %}
-            <option value="{{ key }}" {% if status == key %}selected{% endif %}>{{ label }}</option>
-            {% endfor %}
-        </select>
-        <select name="confidentiality">
-            <option value="">Any confidentiality</option>
-            {% for key, label in confidentiality_choices %}
-            <option value="{{ key }}" {% if confidentiality == key %}selected{% endif %}>{{ label }}</option>
-            {% endfor %}
-        </select>
-        <input type="text" name="tag" value="{{ tag }}" placeholder="Tag" />
-        <button type="submit">Filter</button>
-    </form>
-
-    {% if cases %}
-    <table style="width: 100%; border-collapse: collapse;">
-        <thead>
-            <tr>
-                <th style="text-align: left; border-bottom: 1px solid #ccc;">Title</th>
-                <th style="text-align: left; border-bottom: 1px solid #ccc;">Client/Org</th>
-                <th style="text-align: left; border-bottom: 1px solid #ccc;">Status</th>
-                <th style="text-align: left; border-bottom: 1px solid #ccc;">Confidentiality</th>
-                <th style="text-align: left; border-bottom: 1px solid #ccc;">Sort Date</th>
-                <th style="text-align: left; border-bottom: 1px solid #ccc;">Tags</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for case in cases %}
-            <tr>
-                <td style="padding: 0.5rem 0;">
-                    <a href="{% url 'casebook_detail' slug=case.slug %}">{{ case.title }}</a>
-                    <div><a href="{% url 'casebook_edit' slug=case.slug %}">Edit</a></div>
-                </td>
-                <td>{{ case.client_or_org|default:"-" }}</td>
-                <td>{{ case.get_status_display }}</td>
-                <td>{{ case.get_confidentiality_display }}</td>
-                <td>{{ case.sort_date|default:"-" }}</td>
-                <td>
-                    {% for tag in case.tags.all %}
-                    {{ tag.name }}{% if not forloop.last %}, {% endif %}
-                    {% empty %}-{% endfor %}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% else %}
-    <p>No cases found.</p>
-    {% endif %}
-</main>
+        {% if cases %}
+        <div class="table-container">
+            <table class="table is-fullwidth is-striped is-hoverable">
+                <thead>
+                    <tr>
+                        <th>Campaign</th>
+                        <th>Client / Org</th>
+                        <th>Status</th>
+                        <th>Confidentiality</th>
+                        <th>Sort Date</th>
+                        <th>Tags</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for case in cases %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'casebook_detail' slug=case.slug %}">{{ case.title|default:"Untitled Campaign" }}</a><br>
+                            <a class="is-size-7" href="{% url 'casebook_edit' slug=case.slug %}">Edit</a>
+                        </td>
+                        <td>{{ case.client_or_org|default:"-" }}</td>
+                        <td>{{ case.get_status_display|default:"-" }}</td>
+                        <td>{{ case.get_confidentiality_display|default:"-" }}</td>
+                        <td>{{ case.sort_date|default:"-" }}</td>
+                        <td>
+                            {% for tag in case.tags.all %}
+                            <span class="tag is-light">{{ tag.name }}</span>
+                            {% empty %}-{% endfor %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <article class="message is-info">
+            <div class="message-body">
+                No campaigns found yet. Start by creating your first campaign entry.
+            </div>
+        </article>
+        {% endif %}
+    </div>
+</section>
 {% endblock %}

@@ -5,6 +5,23 @@ from .models import CaseAsset, CaseChannelSpend, CaseMetric, CaseStudy
 
 
 class CaseStudyForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for name, field in self.fields.items():
+            widget = field.widget
+            base_class = "textarea" if isinstance(widget, forms.Textarea) else "input"
+            if isinstance(widget, forms.Select):
+                base_class = "select"
+            if name == "tags":
+                base_class = "input"
+
+            if base_class == "select":
+                widget.attrs["class"] = "select"
+            else:
+                widget.attrs["class"] = f"{widget.attrs.get('class', '').strip()} {base_class}".strip()
+
+            widget.attrs.setdefault("autocomplete", "off")
+
     class Meta:
         model = CaseStudy
         fields = [
@@ -61,8 +78,14 @@ CaseAssetFormSet = inlineformset_factory(
         "is_hero",
         "alt_text",
     ],
-    widgets={"date": forms.TextInput(attrs={"placeholder": "January 2024"})},
-    extra=1,
+    widgets={
+        "date": forms.TextInput(attrs={"placeholder": "January 2024", "class": "input"}),
+        "caption": forms.Textarea(attrs={"class": "textarea"}),
+        "platform": forms.TextInput(attrs={"class": "input"}),
+        "format": forms.TextInput(attrs={"class": "input"}),
+        "alt_text": forms.TextInput(attrs={"class": "input"}),
+    },
+    extra=5,
     can_delete=True,
 )
 
@@ -70,7 +93,14 @@ CaseMetricFormSet = inlineformset_factory(
     CaseStudy,
     CaseMetric,
     fields=["metric_name", "value", "timeframe", "source", "notes"],
-    extra=1,
+    widgets={
+        "metric_name": forms.TextInput(attrs={"class": "input"}),
+        "value": forms.TextInput(attrs={"class": "input"}),
+        "timeframe": forms.TextInput(attrs={"class": "input"}),
+        "source": forms.TextInput(attrs={"class": "input"}),
+        "notes": forms.TextInput(attrs={"class": "input"}),
+    },
+    extra=5,
     can_delete=True,
 )
 
@@ -78,6 +108,11 @@ CaseChannelSpendFormSet = inlineformset_factory(
     CaseStudy,
     CaseChannelSpend,
     fields=["channel", "spend_currency", "spend_amount", "dates", "notes"],
-    extra=1,
+    widgets={
+        "spend_amount": forms.NumberInput(attrs={"class": "input"}),
+        "dates": forms.TextInput(attrs={"class": "input"}),
+        "notes": forms.TextInput(attrs={"class": "input"}),
+    },
+    extra=5,
     can_delete=True,
 )
