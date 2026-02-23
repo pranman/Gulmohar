@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load wagtailimages_tags %}
+
+{% block title %}{{ case.title }}{% endblock %}
+
+{% block content %}
+<main style="max-width: 1000px; margin: 2rem auto; padding: 0 1rem;">
+    <p><a href="{% url 'casebook_index' %}">Back to case list</a> | <a href="{% url 'casebook_edit' slug=case.slug %}">Edit this case</a></p>
+    <h1>{{ case.title }}</h1>
+    <p>{{ case.one_liner }}</p>
+    <p>
+        <strong>Status:</strong> {{ case.get_status_display }} |
+        <strong>Confidentiality:</strong> {{ case.get_confidentiality_display }}
+    </p>
+    <p><strong>Client/Org:</strong> {{ case.client_or_org|default:"-" }}</p>
+    <p><strong>Brand/Campaign:</strong> {{ case.brand_or_campaign|default:"-" }}</p>
+    <p><strong>Dates:</strong> {{ case.date_start|default:"-" }} to {{ case.date_end|default:"-" }}</p>
+
+    <h2>Objective</h2>
+    <p>{{ case.objective|linebreaksbr }}</p>
+    <h2>Strategy</h2>
+    <p>{{ case.strategy|linebreaksbr }}</p>
+    <h2>My Contribution</h2>
+    <p>{{ case.my_contribution|linebreaksbr }}</p>
+    <h2>Production And Tooling</h2>
+    <p>{{ case.production_and_tooling|linebreaksbr }}</p>
+    <h2>Delivery And Distribution</h2>
+    <p>{{ case.delivery_and_distribution|linebreaksbr }}</p>
+    <h2>Results Summary</h2>
+    <p>{{ case.results_summary|linebreaksbr }}</p>
+
+    <h2>Metrics</h2>
+    <ul>
+        {% for metric in case.metrics.all %}
+        <li><strong>{{ metric.metric_name }}</strong>: {{ metric.value }} ({{ metric.timeframe|default:"n/a" }}, {{ metric.source|default:"unknown source" }})</li>
+        {% empty %}
+        <li>No metrics captured.</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Channel Spend</h2>
+    <ul>
+        {% for spend in case.channel_spend.all %}
+        <li>{{ spend.channel }} - {{ spend.spend_currency }} {{ spend.spend_amount|default:"n/a" }} ({{ spend.dates|default:"no date range" }})</li>
+        {% empty %}
+        <li>No channel spend captured.</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Assets</h2>
+    {% for asset in case.assets.all %}
+    <article style="border: 1px solid #ddd; padding: 1rem; margin-bottom: 1rem;">
+        <p><strong>{{ asset.get_asset_type_display }}</strong> {% if asset.is_hero %}(Hero){% endif %}</p>
+        {% image asset.image width-800 as display_image %}
+        <img src="{{ display_image.url }}" alt="{{ asset.alt_text|default:asset.caption|default:case.title }}" style="max-width: 100%; height: auto;" />
+        <p>{{ asset.caption|default:"No caption." }}</p>
+        <p>{{ asset.platform|default:"-" }} | {{ asset.format|default:"-" }} | {{ asset.date|default:"-" }}</p>
+    </article>
+    {% empty %}
+    <p>No assets attached.</p>
+    {% endfor %}
+</main>
+{% endblock %}

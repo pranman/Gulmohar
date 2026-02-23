@@ -2,17 +2,22 @@
 
 ## Status overview
 
-- Phase 1 - Project bootstrap and hygiene: in progress
-- Phase 2 - Casebook data models: pending
-- Phase 3 - Wagtail admin UX: pending
-- Phase 4 - Local frontend UX: pending
-- Phase 5 - Export command: pending
-- Phase 6 - Migrations, validation, docs: pending
+- Phase 1 - Project bootstrap and hygiene: complete
+- Phase 2 - Casebook data models: complete
+- Phase 3 - Wagtail admin UX: complete
+- Phase 4 - Local frontend UX: complete
+- Phase 5 - Export command: complete
+- Phase 6 - Migrations, validation, docs: in progress
 
 ## Current step
 
-Initialize repository baseline files and dependency hygiene for a PowerShell + venv workflow.
+Run end-to-end validation (runserver, browser checks, automated data seeding, export verification), then finish docs.
 
 ## Git checkpoints
 
-- Pending first checkpoint commit/push.
+- Checkpoint 1 complete:
+  - Commit: `b2a545f`
+  - Scope: Wagtail scaffold + baseline docs/hygiene
+  - Push: `main` updated on origin
+- Checkpoint 2 pending:
+  - Scope: casebook models/admin/frontend/export integration + migrations

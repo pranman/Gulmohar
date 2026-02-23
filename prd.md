@@ -22,6 +22,7 @@ Build a Wagtail app named `casebook` to capture detailed case studies with narra
 
 - `casebook` app exists with models, migrations, and snippet registration.
 - Admin supports search/filter/list columns and inline editing.
-- Frontend allows localhost interaction with records.
+- Frontend allows localhost interaction with records, including create/edit for case studies and related entities.
 - `export_casebook` command emits valid JSON matching required schema.
+- Export command supports privacy controls for sensitive/private records and optional private-note inclusion.
 - Final automated test run creates test data, attaches images, and produces successful export without manual intervention.
