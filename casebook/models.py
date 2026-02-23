@@ -240,7 +240,7 @@ class CaseStudy(index.Indexed, ClusterableModel):
             ObjectList(delivery_panels, heading="Delivery & Production"),
             ObjectList(results_panels, heading="Results"),
             ObjectList(assets_panels, heading="Assets"),
-            ObjectList(private_panels, heading="Private"),
+            ObjectList(private_panels, heading="Notes"),
         ]
     )
 

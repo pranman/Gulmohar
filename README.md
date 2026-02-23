@@ -35,29 +35,32 @@ Two supported paths:
 1) Snippet admin
 - Go to `http://localhost:8000/admin/`
 - Open **Snippets -> Case Studies**
-- Fill grouped tabs (Overview, Narrative, Delivery & Production, Results, Assets, Private)
+- Fill grouped tabs (Overview, Narrative, Delivery & Production, Results, Assets, Notes)
 
 2) Local frontend editor
 - Go to `http://localhost:8000/casebook/new/`
 - Fill form fields with inline related sections:
-  - Assets
+  - Assets (image or uploaded video per asset row)
   - Metrics
   - Channel spend
 - Save and review on the detail page
+
+Entry notes:
+- All fields are optional for faster drafting.
+- Date fields are flexible text (examples: `2024`, `January 2024`, `Q1 2025`).
+- Multiple assets can be attached to the same campaign.
 
 ## Casebook export
 
 ```powershell
 .\.venv\Scripts\python.exe manage.py export_casebook --output casebook_export.json
-.\.venv\Scripts\python.exe manage.py export_casebook --output casebook_export.json --include-sensitive
-.\.venv\Scripts\python.exe manage.py export_casebook --output casebook_export.json --include-sensitive --include-private
-.\.venv\Scripts\python.exe manage.py export_casebook --output casebook_export.json --include-sensitive --include-private-notes
+.\.venv\Scripts\python.exe manage.py export_casebook --output casebook_export.json --include-notes
 ```
 
-Default export behavior excludes:
-- `status=sensitive`
-- `confidentiality=private`
-- `notes_private`
+Default export behavior:
+- Includes all campaigns.
+- Excludes `notes` unless `--include-notes` is provided.
+- Emits image rendition URLs and uploaded-video document URLs (no binary embedding).
 
 ## Automated final acceptance test
 
@@ -67,9 +70,9 @@ Default export behavior excludes:
 
 What it does:
 - Generates test images in `test_assets/`
-- Seeds a fully populated lorem case with related metrics/channel spend/assets
+- Seeds a fully populated lorem case with related metrics/channel spend/assets (including a video document)
 - Runs `export_casebook`
-- Verifies required JSON contract and private-note exclusion defaults
+- Verifies required JSON contract and notes inclusion behavior
 - Writes export to `exports/final_casebook_export.json`
 
 ## AI extension notes
