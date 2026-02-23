@@ -1,0 +1,267 @@
+{
+  "generated_at": "2026-02-23T14:42:10.527883+00:00",
+  "count": 3,
+  "cases": [
+    {
+      "title": "Lorem Ipsum Campaign 2ed9351d",
+      "slug": "lorem-ipsum-campaign-2ed9351d",
+      "client_or_org": "Lorem Org",
+      "brand_or_campaign": "Ipsum Launch",
+      "date_start": "2025-01-01",
+      "date_end": "2025-03-31",
+      "sort_date": "2025-03-31",
+      "location": "UK / US / Global",
+      "status": "publishable",
+      "confidentiality": "public",
+      "one_liner": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      "objective": "Grow qualified reach and improve conversion quality.",
+      "audience": "Primary audience: growth-stage founders and operators.",
+      "constraints": "Tight timeline, capped media budget, compliance review.",
+      "strategy": "Test-and-learn creative matrix with channel-specific messaging.",
+      "creative_direction": "Bold color blocks and direct value-led language.",
+      "production_and_tooling": "Built with Python pipelines, Figma, and ad managers.",
+      "delivery_and_distribution": "Weekly creative drops across paid and owned surfaces.",
+      "my_contribution": "Owned strategy, experimentation design, and performance synthesis.",
+      "team_and_partners": "Worked with internal growth, design, and media buying teams.",
+      "results_summary": "Performance improved across efficiency and conversion signals.",
+      "what_worked": "Short-cycle iteration and audience-segmented creative.",
+      "what_id_do_differently": "Increase instrumentation depth from week one.",
+      "spend_currency": "GBP",
+      "spend_amount_min": "12000.00",
+      "spend_amount_max": "18000.00",
+      "spend_notes": "Approximate range excluding production.",
+      "proof_links": [
+        "https://example.com/report",
+        "https://example.com/dashboard"
+      ],
+      "press_mentions": [
+        "https://example.com/press-mention"
+      ],
+      "tags": [],
+      "metrics": [
+        {
+          "metric_name": "ROAS",
+          "value": "3.2",
+          "timeframe": "Q1 2025",
+          "source": "Meta Ads",
+          "notes": "Sustained after week 4."
+        },
+        {
+          "metric_name": "Reach",
+          "value": "4.5m users",
+          "timeframe": "6 weeks",
+          "source": "GA4",
+          "notes": "Deduplicated estimate."
+        }
+      ],
+      "channel_spend": [
+        {
+          "channel": "Meta",
+          "spend_currency": "GBP",
+          "spend_amount": "9000.00",
+          "dates": "Jan-Feb 2025",
+          "notes": "Primary spend lane."
+        },
+        {
+          "channel": "Google",
+          "spend_currency": "GBP",
+          "spend_amount": "6000.00",
+          "dates": "Feb-Mar 2025",
+          "notes": "Intent capture support."
+        }
+      ],
+      "assets": [
+        {
+          "type": "creative",
+          "caption": "Lorem caption 1",
+          "platform": "Meta",
+          "format": "1:1",
+          "date": "2025-01-15",
+          "is_hero": true,
+          "alt_text": "Lorem alt text 1",
+          "image_urls": {
+            "original": "/media/original_images/creative_red_B98lUB5.png",
+            "fill_1600x900": "/media/images/creative_red_B98lUB5.2e16d0ba.fill-1600x900.png",
+            "max_1200x1200": "/media/images/creative_red_B98lUB5.max-1200x1200.png"
+          }
+        },
+        {
+          "type": "creative",
+          "caption": "Lorem caption 2",
+          "platform": "Meta",
+          "format": "9:16",
+          "date": "2025-01-16",
+          "is_hero": false,
+          "alt_text": "Lorem alt text 2",
+          "image_urls": {
+            "original": "/media/original_images/creative_green_8bpSBI4.png",
+            "fill_1600x900": "/media/images/creative_green_8bpSBI4.2e16d0ba.fill-1600x900.png",
+            "max_1200x1200": "/media/images/creative_green_8bpSBI4.max-1200x1200.png"
+          }
+        },
+        {
+          "type": "creative",
+          "caption": "Lorem caption 3",
+          "platform": "Meta",
+          "format": "9:16",
+          "date": "2025-01-17",
+          "is_hero": false,
+          "alt_text": "Lorem alt text 3",
+          "image_urls": {
+            "original": "/media/original_images/creative_blue_Ub7utGi.png",
+            "fill_1600x900": "/media/images/creative_blue_Ub7utGi.2e16d0ba.fill-1600x900.png",
+            "max_1200x1200": "/media/images/creative_blue_Ub7utGi.max-1200x1200.png"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Lorem Ipsum Campaign 7d867470",
+      "slug": "lorem-ipsum-campaign-7d867470",
+      "client_or_org": "Lorem Org",
+      "brand_or_campaign": "Ipsum Launch",
+      "date_start": "2025-01-01",
+      "date_end": "2025-03-31",
+      "sort_date": "2025-03-31",
+      "location": "UK / US / Global",
+      "status": "publishable",
+      "confidentiality": "public",
+      "one_liner": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      "objective": "Grow qualified reach and improve conversion quality.",
+      "audience": "Primary audience: growth-stage founders and operators.",
+      "constraints": "Tight timeline, capped media budget, compliance review.",
+      "strategy": "Test-and-learn creative matrix with channel-specific messaging.",
+      "creative_direction": "Bold color blocks and direct value-led language.",
+      "production_and_tooling": "Built with Python pipelines, Figma, and ad managers.",
+      "delivery_and_distribution": "Weekly creative drops across paid and owned surfaces.",
+      "my_contribution": "Owned strategy, experimentation design, and performance synthesis.",
+      "team_and_partners": "Worked with internal growth, design, and media buying teams.",
+      "results_summary": "Performance improved across efficiency and conversion signals.",
+      "what_worked": "Short-cycle iteration and audience-segmented creative.",
+      "what_id_do_differently": "Increase instrumentation depth from week one.",
+      "spend_currency": "GBP",
+      "spend_amount_min": "12000.00",
+      "spend_amount_max": "18000.00",
+      "spend_notes": "Approximate range excluding production.",
+      "proof_links": [
+        "https://example.com/report",
+        "https://example.com/dashboard"
+      ],
+      "press_mentions": [
+        "https://example.com/press-mention"
+      ],
+      "tags": [],
+      "metrics": [
+        {
+          "metric_name": "ROAS",
+          "value": "3.2",
+          "timeframe": "Q1 2025",
+          "source": "Meta Ads",
+          "notes": "Sustained after week 4."
+        },
+        {
+          "metric_name": "Reach",
+          "value": "4.5m users",
+          "timeframe": "6 weeks",
+          "source": "GA4",
+          "notes": "Deduplicated estimate."
+        }
+      ],
+      "channel_spend": [
+        {
+          "channel": "Meta",
+          "spend_currency": "GBP",
+          "spend_amount": "9000.00",
+          "dates": "Jan-Feb 2025",
+          "notes": "Primary spend lane."
+        },
+        {
+          "channel": "Google",
+          "spend_currency": "GBP",
+          "spend_amount": "6000.00",
+          "dates": "Feb-Mar 2025",
+          "notes": "Intent capture support."
+        }
+      ],
+      "assets": [
+        {
+          "type": "creative",
+          "caption": "Lorem caption 1",
+          "platform": "Meta",
+          "format": "1:1",
+          "date": "2025-01-15",
+          "is_hero": true,
+          "alt_text": "Lorem alt text 1",
+          "image_urls": {
+            "original": "/media/original_images/creative_red.png",
+            "fill_1600x900": "/media/images/creative_red.2e16d0ba.fill-1600x900.png",
+            "max_1200x1200": "/media/images/creative_red.max-1200x1200.png"
+          }
+        },
+        {
+          "type": "creative",
+          "caption": "Lorem caption 2",
+          "platform": "Meta",
+          "format": "9:16",
+          "date": "2025-01-16",
+          "is_hero": false,
+          "alt_text": "Lorem alt text 2",
+          "image_urls": {
+            "original": "/media/original_images/creative_green.png",
+            "fill_1600x900": "/media/images/creative_green.2e16d0ba.fill-1600x900.png",
+            "max_1200x1200": "/media/images/creative_green.max-1200x1200.png"
+          }
+        },
+        {
+          "type": "creative",
+          "caption": "Lorem caption 3",
+          "platform": "Meta",
+          "format": "9:16",
+          "date": "2025-01-17",
+          "is_hero": false,
+          "alt_text": "Lorem alt text 3",
+          "image_urls": {
+            "original": "/media/original_images/creative_blue.png",
+            "fill_1600x900": "/media/images/creative_blue.2e16d0ba.fill-1600x900.png",
+            "max_1200x1200": "/media/images/creative_blue.max-1200x1200.png"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Validation Test Case",
+      "slug": "validation-test-case",
+      "client_or_org": "",
+      "brand_or_campaign": "",
+      "date_start": null,
+      "date_end": null,
+      "sort_date": null,
+      "location": "",
+      "status": "publishable",
+      "confidentiality": "public",
+      "one_liner": "Updated one-liner for validation",
+      "objective": "Test objective",
+      "audience": "",
+      "constraints": "",
+      "strategy": "Test strategy",
+      "creative_direction": "",
+      "production_and_tooling": "",
+      "delivery_and_distribution": "",
+      "my_contribution": "Test contribution",
+      "team_and_partners": "",
+      "results_summary": "",
+      "what_worked": "",
+      "what_id_do_differently": "",
+      "spend_currency": "GBP",
+      "spend_amount_min": null,
+      "spend_amount_max": null,
+      "spend_notes": "",
+      "proof_links": [],
+      "press_mentions": [],
+      "tags": [],
+      "metrics": [],
+      "channel_spend": [],
+      "assets": []
+    }
+  ]
+}
